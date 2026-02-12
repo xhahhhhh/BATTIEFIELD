@@ -1,0 +1,88 @@
+# Visual Studio 2015/2017/2019/2022 cache/options directory
+.vs/
+
+# Unreal Engine cache and intermediate files
+Binaries/
+Build/
+Content/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+*.ipa
+
+# Unreal Engine files to ignore
+*.opensdf
+*.sdf
+*.sln
+*.suo
+*.xcodeproj
+*.xcworkspace
+
+# Starter Content (optional - uncomment if you want to exclude it)
+# Content/StarterContent/
+
+# Android/IOS build files
+Android/
+IOS/
+
+# Mac desktop service store files
+.DS_Store
+
+# Plugin intermediate files
+Plugins/*/Binaries/
+Plugins/*/Intermediate/
+
+# Cache files for the editor to use
+*_BuiltData.uasset
+*.tmp
+
+# Crash reports
+*.dmp
+
+# Log files
+*.log
+
+# Local configuration file
+*.ini
+!Config/DefaultEngine.ini
+!Config/DefaultGame.ini
+!Config/DefaultInput.ini
+!Config/DefaultEditor.ini
+
+# Packaging artifacts
+WindowsNoEditor/
+LinuxNoEditor/
+MacNoEditor/
+
+# Rider
+.idea/
+*.sln.DotSettings.user
+
+# Visual Studio Code
+.vscode/
