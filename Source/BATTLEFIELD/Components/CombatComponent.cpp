@@ -614,7 +614,6 @@ void UCombatComponent::EquipWeapon(AWeaponBase* WeaponToEquip)
 void UCombatComponent::SwapWeapons()
 {
 	if (CombatState != ECombatState::ECS_Unoccupied || Character == nullptr)return;
-	
 	Character->PlaySwapMontage();
 	Character->bFinishedSwapping = false;
 	CombatState = ECombatState::ECS_SwappingWeapons;

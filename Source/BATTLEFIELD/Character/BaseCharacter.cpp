@@ -279,7 +279,6 @@ void ABaseCharacter::OnRep_ReplicatedMovement()
 {
 	Super::OnRep_ReplicatedMovement();
 	SimProxiesTurn();
-
 	TimeSinceLastMovementReplication = 0.f;
 }
 
@@ -315,16 +314,16 @@ void ABaseCharacter::MulticastElim_Implementation(bool bPlayerLeftGame)
 		BasePlayerController->SetHUDWeaponAmmo(0);
 	}
 	bElimmed = true;
-	PlayElimMontage();
-
-	if (DissolveMaterialInstance)
-	{
-		DynamicDissolveMaterialInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
-		GetMesh()->SetMaterial(0, DynamicDissolveMaterialInstance);
-		DynamicDissolveMaterialInstance->SetScalarParameterValue(TEXT("Dissolve"), .55f);
-		DynamicDissolveMaterialInstance->SetScalarParameterValue(TEXT("Glow"), 200.f);
-	}
-	StartDissolve();
+	// PlayElimMontage();
+	GetMesh()->SetSimulatePhysics(true);
+	// if (DissolveMaterialInstance)
+	// {
+	// 	DynamicDissolveMaterialInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
+	// 	GetMesh()->SetMaterial(0, DynamicDissolveMaterialInstance);
+	// 	DynamicDissolveMaterialInstance->SetScalarParameterValue(TEXT("Dissolve"), .55f);
+	// 	DynamicDissolveMaterialInstance->SetScalarParameterValue(TEXT("Glow"), 200.f);
+	// }
+	// StartDissolve();
 
 	GetCharacterMovement()->DisableMovement();
 	GetCharacterMovement()->StopMovementImmediately();
@@ -615,6 +614,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(IA_Shoot, ETriggerEvent::Completed, this, &ABaseCharacter::ShootReleased);
 		EnhancedInputComponent->BindAction(IA_Reload, ETriggerEvent::Started, this, &ABaseCharacter::ReloadPressed);
 		EnhancedInputComponent->BindAction(IA_Throw, ETriggerEvent::Started, this, &ABaseCharacter::ThrowPressed);
+		EnhancedInputComponent->BindAction(IA_SwapWeapon, ETriggerEvent::Started, this, &ABaseCharacter::SwapWeapon);
 	}
 }
 
@@ -668,14 +668,7 @@ void ABaseCharacter::EquipButtonPressed()
 		// }
 		if (Combat->bHoldTheFlag)return;
 		if (Combat->CombatState == ECombatState::ECS_Unoccupied)ServerEquipButtonPressed();
-		bool bSwap = Combat->ShouldSwapWeapons() && !HasAuthority() && Combat->CombatState ==
-			ECombatState::ECS_Unoccupied && OverlappingWeapon == nullptr;
-		if (bSwap)
-		{
-			PlaySwapMontage();
-			Combat->CombatState = ECombatState::ECS_SwappingWeapons;
-			bFinishedSwapping = false;
-		}
+		
 	}
 }
 
@@ -757,6 +750,19 @@ void ABaseCharacter::ThrowPressed()
 	if (Combat)
 	{
 		Combat->ThrowGrenade();
+	}
+}
+
+void ABaseCharacter::SwapWeapon()
+{
+	bool bSwap =Combat&& Combat->ShouldSwapWeapons() && !HasAuthority() && Combat->CombatState ==
+		ECombatState::ECS_Unoccupied && OverlappingWeapon == nullptr;
+	if (bSwap)
+	{
+		// PlaySwapMontage();
+		// Combat->CombatState = ECombatState::ECS_SwappingWeapons;
+		bFinishedSwapping = false;
+		ServerSwapWeapon();
 	}
 }
 
@@ -1078,10 +1084,14 @@ void ABaseCharacter::ServerEquipButtonPressed_Implementation()
 		{
 			Combat->EquipWeapon(OverlappingWeapon);
 		}
-		else if (Combat->ShouldSwapWeapons())
-		{
-			Combat->SwapWeapons();
-		}
+	}
+}
+
+void ABaseCharacter::ServerSwapWeapon_Implementation()
+{
+	if (Combat && Combat->ShouldSwapWeapons())
+	{
+		Combat->SwapWeapons();
 	}
 }
 

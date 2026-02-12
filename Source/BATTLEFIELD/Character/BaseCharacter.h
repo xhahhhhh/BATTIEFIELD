@@ -110,6 +110,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* IA_Throw;
+	
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* IA_SwapWeapon;
 
 protected:
 	virtual void BeginPlay() override;
@@ -126,6 +129,7 @@ protected:
 	void ShootPressed();
 	void ShootReleased();
 	void ThrowPressed();
+	void SwapWeapon();
 
 	void AimOffset(float DeltaTime);
 	void CalculateAO_Pitch();
@@ -231,6 +235,9 @@ private:
 	UFUNCTION(Server, Reliable)
 	void ServerEquipButtonPressed();
 
+	UFUNCTION(Server, Reliable)
+	void ServerSwapWeapon();
+	
 	UFUNCTION()
 	void OnRep_OverlappingWeapon(AWeaponBase* Lastweapon);
 

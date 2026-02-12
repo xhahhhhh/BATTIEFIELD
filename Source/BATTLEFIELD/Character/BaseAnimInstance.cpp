@@ -64,7 +64,7 @@ void UBaseAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		if (OwningCharacter->IsLocallyControlled())
 		{
 			bLocallyControlled = true;
-			FTransform RightHandTransform = EquippedWeapon->GetWeaponMesh()->GetSocketTransform(
+			FTransform RightHandTransform = OwningCharacter->GetMesh()->GetSocketTransform(
 				FName("hand_r"), ERelativeTransformSpace::RTS_World);
 			FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(
 				RightHandTransform.GetLocation(),
@@ -84,9 +84,9 @@ void UBaseAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			GetDisableGameplay();
 		bTransformRightHand = OwningCharacter->GetCombatState() != ECombatState::ECS_Reloading && !OwningCharacter->
 			GetDisableGameplay();
-		/*FTransform MuzzleTipTransform = EquippedWeapon->GetWeaponMesh()->GetSocketTransform(FName("MuzzleFlashSocket"), ERelativeTransformSpace::RTS_World);
-		FVector MuzzleX(FRotationMatrix(MuzzleTipTransform.GetRotation().Rotator()).GetUnitAxis(EAxis::X));
-		DrawDebugLine(GetWorld(), MuzzleTipTransform.GetLocation(), MuzzleTipTransform.GetLocation() + MuzzleX * 1000.f, FColor::Red);
-		DrawDebugLine(GetWorld(), MuzzleTipTransform.GetLocation(), OwningCharacter->GetHitTarget(), FColor::Orange);*/
+		// FTransform MuzzleTipTransform = EquippedWeapon->GetWeaponMesh()->GetSocketTransform(FName("MuzzleFlashSocket"), ERelativeTransformSpace::RTS_World);
+		// FVector MuzzleX(FRotationMatrix(MuzzleTipTransform.GetRotation().Rotator()).GetUnitAxis(EAxis::X));
+		// DrawDebugLine(GetWorld(), MuzzleTipTransform.GetLocation(), MuzzleTipTransform.GetLocation() + MuzzleX * 1000.f, FColor::Red);
+		// DrawDebugLine(GetWorld(), MuzzleTipTransform.GetLocation(), OwningCharacter->GetHitTarget(), FColor::Orange);
 	}
 }
