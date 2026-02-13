@@ -3,7 +3,6 @@
 
 #include "BasePlayerController.h"
 
-#include "AssetDefinitionAssetInfo.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "../HUD/PlayerHUD.h"
@@ -15,7 +14,6 @@
 #include "../GameMode/PlayerGameMode.h"
 #include "BATTLEFIELD/Components/CombatComponent.h"
 #include "BATTLEFIELD/HUD/Announcement.h"
-#include "../Components/CombatComponent.h"
 #include "BATTLEFIELD/GameState/BaseGameState.h"
 #include "BATTLEFIELD/HUD/PauseMenu.h"
 #include "BATTLEFIELD/PlayerState/BasePlayerState.h"

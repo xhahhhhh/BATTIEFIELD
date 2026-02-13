@@ -755,12 +755,12 @@ void ABaseCharacter::ThrowPressed()
 
 void ABaseCharacter::SwapWeapon()
 {
-	bool bSwap =Combat&& Combat->ShouldSwapWeapons() && !HasAuthority() && Combat->CombatState ==
+	bool bSwap =Combat&& Combat->ShouldSwapWeapons()&& Combat->CombatState ==
 		ECombatState::ECS_Unoccupied && OverlappingWeapon == nullptr;
 	if (bSwap)
 	{
-		// PlaySwapMontage();
-		// Combat->CombatState = ECombatState::ECS_SwappingWeapons;
+		PlaySwapMontage();
+		Combat->CombatState = ECombatState::ECS_SwappingWeapons;
 		bFinishedSwapping = false;
 		ServerSwapWeapon();
 	}

@@ -27,15 +27,15 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 				FString MatchType = Subsystem->GetDesiredMatchType();
 				if (MatchType == "FreeForAll")
 				{
-					World->ServerTravel(FString("/Game/Maps/Map1?listen"));
+					World->ServerTravel(FString("/Game/Maps/Train?listen"));
 				}
 				else if (MatchType == "Teams")
 				{
-					World->ServerTravel(FString("/Game/Maps/Map1?listen"));
+					World->ServerTravel(FString("/Game/Maps/Train?listen"));
 				}
 				else if (MatchType == "CaptureTheFlag")
 				{
-					World->ServerTravel(FString("/Game/Maps/Map1?listen"));
+					World->ServerTravel(FString("/Game/Maps/Train?listen"));
 				}
 			}
 		}

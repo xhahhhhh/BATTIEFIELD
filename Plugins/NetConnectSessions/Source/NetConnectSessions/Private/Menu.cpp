@@ -6,12 +6,14 @@
 #include "OnlineSubsystem.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "MultiplayerSessionsSubsystem.h"
+#include "Components/CheckBox.h"
+#include "Components/EditableTextBox.h"
 
 void UMenu::MenuSetup(int32 NumberofPublicConnections, FString TypeOfMatch, FString LobbyPath)
 {
 	PathToLobby = FString::Printf(TEXT("%s?listen"), *LobbyPath);
-	NumPublicConnections = NumberofPublicConnections;
-	MatchType = TypeOfMatch;
+	// NumPublicConnections = NumberofPublicConnections;
+	// MatchType = TypeOfMatch;
 	AddToViewport();
 	SetVisibility(ESlateVisibility::Visible);
 	SetIsFocusable(true);
@@ -66,6 +68,22 @@ bool UMenu::Initialize()
 
 	{
 		QuitButton->OnClicked.AddDynamic(this, &UMenu::QuitButtonClicked);
+	}
+	if (FreeForAllCheckBox)
+	{
+		FreeForAllCheckBox->OnCheckStateChanged.AddDynamic(this,&UMenu::FreeForAllCheckBoxClicked);
+	}
+	if (TeamsCheckBox)
+	{
+		TeamsCheckBox->OnCheckStateChanged.AddDynamic(this,&UMenu::TeamsCheckBoxClicked);
+	}
+	if (CaptureTheFlagCheckBox)
+	{
+		CaptureTheFlagCheckBox->OnCheckStateChanged.AddDynamic(this,&UMenu::CaptureTheFlagCheckBoxClicked);
+	}
+	if (NumPlayersTextBox)
+	{
+		NumPlayersTextBox->OnTextChanged.AddDynamic(this,&UMenu::NumPlayersTextBoxWrited);
 	}
 
 	return true;;
@@ -193,6 +211,41 @@ void UMenu::QuitButtonClicked()
 		EQuitPreference::Quit,
 		false
 	);
+}
+
+void UMenu::FreeForAllCheckBoxClicked(bool bIsChecked)
+{
+	if (bIsChecked)
+	{
+		TeamsCheckBox->SetCheckedState(ECheckBoxState::Unchecked);
+		CaptureTheFlagCheckBox->SetCheckedState(ECheckBoxState::Unchecked);
+		MatchType = FString(TEXT("FreeForAll"));
+	}
+}
+
+void UMenu::TeamsCheckBoxClicked(bool bIsChecked)
+{
+	if (bIsChecked)
+	{
+		FreeForAllCheckBox->SetCheckedState(ECheckBoxState::Unchecked);
+		CaptureTheFlagCheckBox->SetCheckedState(ECheckBoxState::Unchecked);
+		MatchType = FString(TEXT("Teams"));
+	}
+}
+
+void UMenu::CaptureTheFlagCheckBoxClicked(bool bIsChecked)
+{
+	if (bIsChecked)
+	{
+		FreeForAllCheckBox->SetCheckedState(ECheckBoxState::Unchecked);
+		TeamsCheckBox->SetCheckedState(ECheckBoxState::Unchecked);
+		MatchType = FString(TEXT("CaptureTheFlag"));
+	}
+}
+
+void UMenu::NumPlayersTextBoxWrited(const FText& Text)
+{
+	NumPublicConnections = FCString::Atoi(*Text.ToString());
 }
 
 void UMenu::MenuTearDown()

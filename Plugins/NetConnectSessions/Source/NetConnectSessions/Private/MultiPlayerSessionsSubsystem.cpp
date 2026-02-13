@@ -4,6 +4,7 @@
 #include "MultiPlayerSessionsSubsystem.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
+#include "OnlineSubsystemUtils.h"
 
 
 UMultiPlayerSessionsSubsystem::UMultiPlayerSessionsSubsystem() :
@@ -45,7 +46,8 @@ void UMultiPlayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FS
 		CreateSessionCompleteDelegate);
 
 	LastSessionSettings = MakeShareable(new FOnlineSessionSettings());
-	LastSessionSettings->bIsLANMatch = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL" ? true : false;
+	IOnlineSubsystem* Subsystem = Online::GetSubsystem(GetWorld());
+	LastSessionSettings->bIsLANMatch = Subsystem->GetSubsystemName() == "NULL" ? true : false;
 	LastSessionSettings->NumPublicConnections = NumPublicConnections;
 	LastSessionSettings->bAllowJoinInProgress = true;
 	LastSessionSettings->bAllowJoinViaPresence = true;
@@ -74,8 +76,9 @@ void UMultiPlayerSessionsSubsystem::FindSessions(int32 MaxSearchResults)
 
 	LastSessionSearch = MakeShareable(new FOnlineSessionSearch());
 	LastSessionSearch->MaxSearchResults = MaxSearchResults;
-	LastSessionSearch->bIsLanQuery = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL" ? true : false;
-	LastSessionSearch->QuerySettings.Set(FName("SEARCH_PERSENCE"), true, EOnlineComparisonOp::Equals);
+	IOnlineSubsystem* Subsystem = Online::GetSubsystem(GetWorld());
+	LastSessionSearch->bIsLanQuery = Subsystem->GetSubsystemName() == "NULL" ? true : false;
+	LastSessionSearch->QuerySettings.Set(FName("SEARCH_PRESENCE"), true, EOnlineComparisonOp::Equals);
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
 	if (!SessionInterface->FindSessions(*LocalPlayer->GetPreferredUniqueNetId(), LastSessionSearch.ToSharedRef()))
 	{
@@ -92,8 +95,7 @@ void UMultiPlayerSessionsSubsystem::JoinSession(const FOnlineSessionSearchResult
 		return;
 	}
 
-	FindSessionsCompleteDelegateHandle = SessionInterface->AddOnFindSessionsCompleteDelegate_Handle(
-		FindSessionsCompleteDelegate);
+	JoinSessionCompleteDelegateHandle = SessionInterface->AddOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegate);
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
 	if (!SessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, SessionResult))
 	{

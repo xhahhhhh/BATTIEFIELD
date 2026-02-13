@@ -287,7 +287,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "PlayerStats")
 	float MaxHealth = 100.f;
 
-	UPROPERTY(Replicated = OnRep_Health, VisibleAnywhere, Category = "PlayerStats")
+	UPROPERTY(Replicatedusing = OnRep_Health, VisibleAnywhere, Category = "PlayerStats")
 	float Health = 100.f;
 
 	UFUNCTION()
@@ -297,7 +297,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "PlayerStats")
 	float MaxShield = 100.f;
 
-	UPROPERTY(Replicated = OnRep_Shield, EditAnywhere, Category = "PlayerStats")
+	UPROPERTY(Replicatedusing = OnRep_Shield, EditAnywhere, Category = "PlayerStats")
 	float Shield = 0.f;
 
 	UFUNCTION()
@@ -406,7 +406,7 @@ public:
 	FORCEINLINE UBuffComponent* GetBuff() const { return Buff; }
 	bool IsLocallyReloading();
 	FORCEINLINE ULagCompensationComponent* GetLagCompensation() const { return LagCompensation; }
-	FORCEINLINE bool IsHoldingTheFlag() const;
+	bool IsHoldingTheFlag() const;
 	ETeam GetTeam();
 	void SetHoldingTheFlag(bool bHolding);
 };

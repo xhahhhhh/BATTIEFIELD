@@ -6,6 +6,8 @@
 #include "Interfaces/OnlineSessionInterface.h"
 #include "Menu.generated.h"
 
+class UEditableTextBox;
+class UCheckBox;
 class UButton;
 class UMultiPlayerSessionsSubsystem;
 UCLASS()
@@ -42,6 +44,18 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* QuitButton;
+	
+	UPROPERTY(meta = (BindWidget))
+	UCheckBox* FreeForAllCheckBox;
+	
+	UPROPERTY(meta = (BindWidget))
+	UCheckBox* TeamsCheckBox;
+	
+	UPROPERTY(meta = (BindWidget))
+	UCheckBox* CaptureTheFlagCheckBox;
+	
+	UPROPERTY(meta = (BindWidget))
+	UEditableTextBox* NumPlayersTextBox;
 
 	UFUNCTION()
 	void HostButtonClicked();
@@ -51,6 +65,18 @@ private:
 
 	UFUNCTION()
 	void QuitButtonClicked();
+	
+	UFUNCTION()
+	void FreeForAllCheckBoxClicked(bool bIsChecked);
+	
+	UFUNCTION()
+	void TeamsCheckBoxClicked(bool bIsChecked);
+	
+	UFUNCTION()
+	void CaptureTheFlagCheckBoxClicked(bool bIsChecked);
+	
+	UFUNCTION()
+	void NumPlayersTextBoxWrited(const FText& Text);
 
 	void MenuTearDown();
 
