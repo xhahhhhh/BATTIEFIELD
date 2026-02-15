@@ -28,9 +28,9 @@ void AProjectileWeapon::Fire(const FVector& HitTarget)
 		AProjectile* SpawnedProjectile = nullptr;
 		if (bUseServerSideRewind)
 		{
-			if (OwnerPawn->HasAuthority())
+			if (OwnerPawn->HasAuthority())//服务器
 			{
-				if (OwnerPawn->IsLocallyControlled()) //服务器，本地控制，生成复制的子弹，无倒带
+				if (OwnerPawn->IsLocallyControlled()) //客户端在服务器上为本地监听，生成复制的子弹，无倒带
 				{
 					SpawnedProjectile = World->SpawnActor<AProjectile>(ProjectileClass, SocketTransform.GetLocation(),
 					                                                   TargetRotation, SpawnParams);
@@ -38,7 +38,7 @@ void AProjectileWeapon::Fire(const FVector& HitTarget)
 					SpawnedProjectile->Damage = Damage;
 					SpawnedProjectile->HeadShotDamage = HeadShotDamage;
 				}
-				else //服务器，非本地，生成非复制子弹，无倒带
+				else //客户端在服务器上为模拟代理，生成非复制子弹，开启倒带
 				{
 					SpawnedProjectile = World->SpawnActor<AProjectile>(ServerSideRewindProjectileClass,
 					                                                   SocketTransform.GetLocation(), TargetRotation,
@@ -46,9 +46,9 @@ void AProjectileWeapon::Fire(const FVector& HitTarget)
 					SpawnedProjectile->bUseServerSideRewind = true;
 				}
 			}
-			else //客户端，使用倒带
+			else //本地客户端
 			{
-				if (OwnerPawn->IsLocallyControlled()) //本地客户端，生成非复制的子弹，启用倒带
+				if (OwnerPawn->IsLocallyControlled()) //自主代理，生成非复制的子弹，启用倒带
 				{
 					SpawnedProjectile = World->SpawnActor<AProjectile>(ServerSideRewindProjectileClass,
 					                                                   SocketTransform.GetLocation(), TargetRotation,
@@ -58,7 +58,7 @@ void AProjectileWeapon::Fire(const FVector& HitTarget)
 					SpawnedProjectile->InitialVelocity = SpawnedProjectile->GetActorForwardVector() * SpawnedProjectile
 						->InitialSpeed;
 				}
-				else // 模拟代理客户端，不使用倒带
+				else //模拟代理客户端，不使用倒带
 				{
 					SpawnedProjectile = World->SpawnActor<AProjectile>(ServerSideRewindProjectileClass,
 					                                                   SocketTransform.GetLocation(), TargetRotation,
@@ -67,7 +67,7 @@ void AProjectileWeapon::Fire(const FVector& HitTarget)
 				}
 			}
 		}
-		else //不使用倒带
+		else //bUseServerSideRewind为false,不使用倒带
 		{
 			if (OwnerPawn->HasAuthority())
 			{

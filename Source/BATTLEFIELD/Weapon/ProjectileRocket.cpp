@@ -54,14 +54,14 @@ void AProjectileRocket::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 	ExplodeDamage();
 
 	StartDestroyTimer();
-	if (ImpactParticles)
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetActorTransform());
-	}
-	if (ImpactSound)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-	}
+	// if (ImpactParticles)
+	// {
+	// 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetActorTransform());
+	// }
+	// if (ImpactSound)
+	// {
+	// 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+	// }
 	if (ProjectileMesh)
 	{
 		ProjectileMesh->SetVisibility(false);
@@ -79,7 +79,7 @@ void AProjectileRocket::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 		ProjectileLoopComponent->Stop();
 	}
 
-	// Super::OnHit(HitComp, OtherActor, OtherComp, NormalImpulse, Hit);
+	Super::OnHit(HitComp, OtherActor, OtherComp, NormalImpulse, Hit);
 }
 
 void AProjectileRocket::Destroyed()

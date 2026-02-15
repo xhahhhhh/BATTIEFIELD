@@ -97,7 +97,7 @@ void AShotgun::FireShotgun(const TArray<FVector_NetQuantize>& HitTargets)
 			ABaseCharacter* Character = Cast<ABaseCharacter>(FireHit.GetActor());
 			if (Character)
 			{
-				const bool bHeadShot = FireHit.BoneName.ToString() == FString("Head");
+				const bool bHeadShot = FireHit.BoneName.ToString() == FString("head");
 				if (bHeadShot)
 				{
 					if (HeadShotHitMap.Contains(Character))HeadShotHitMap[Character]++;
@@ -145,13 +145,15 @@ void AShotgun::FireShotgun(const TArray<FVector_NetQuantize>& HitTargets)
 		{
 			if (HeadShotHitPair.Key)
 			{
-				if (DamageMap.Contains(HeadShotHitPair.Key))DamageMap[HeadShotHitPair.Key] += HeadShotHitPair.Value *
-					HeadShotDamage;
+				if (DamageMap.Contains(HeadShotHitPair.Key))
+					DamageMap[HeadShotHitPair.Key] += HeadShotHitPair.Value *
+						HeadShotDamage;
 				else DamageMap.Emplace(HeadShotHitPair.Key, HeadShotHitPair.Value * HeadShotDamage);
 
 				HitCharacters.AddUnique(HeadShotHitPair.Key);
 			}
 		}
+
 		bool bCauseAuthDamage = !bUseServerSideRewind || OwnerPawn->IsLocallyControlled();
 		for (auto DamagePair : DamageMap)
 		{
@@ -166,10 +168,10 @@ void AShotgun::FireShotgun(const TArray<FVector_NetQuantize>& HitTargets)
 						this,
 						UDamageType::StaticClass()
 					);
+					// GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Green,TEXT("ShotgunTraceEndWithScatter"));
 				}
 			}
 		}
-
 
 		if (!HasAuthority() && bUseServerSideRewind)
 		{
@@ -191,7 +193,7 @@ void AShotgun::FireShotgun(const TArray<FVector_NetQuantize>& HitTargets)
 	}
 }
 
-void AShotgun::ShotgunTraceEndWithScatter(const FVector& HitTarget, TArray<FVector_NetQuantize> HitTargets)
+void AShotgun::ShotgunTraceEndWithScatter(const FVector& HitTarget, TArray<FVector_NetQuantize>& HitTargets)
 {
 	const USkeletalMeshSocket* MuzzleFlashSocket = GetWeaponMesh()->GetSocketByName("MuzzleFlashSocket");
 	if (MuzzleFlashSocket == nullptr)return;
