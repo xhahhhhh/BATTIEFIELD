@@ -12,9 +12,6 @@ void ACaptureTheFlagGameMode::PlayerEliminated(class ABaseCharacter* EliminatedC
                                                ABasePlayerController* VictimController, ABasePlayerController* AttackerController)
 {
 	APlayerGameMode::PlayerEliminated(EliminatedCharacter, VictimController, AttackerController);
-	
-	
-
 }
 
 void ACaptureTheFlagGameMode::FlagCaptured(class AFlag* Flag, class AFlagZone* Zone)
@@ -35,4 +32,9 @@ void ACaptureTheFlagGameMode::FlagCaptured(class AFlag* Flag, class AFlagZone* Z
 			}
 		}
 	}
+}
+
+float ACaptureTheFlagGameMode::CalculateDamage(AController* Attacker, AController* Victim, float BaseDamage)
+{
+	return Super::CalculateDamage(Attacker, Victim, BaseDamage);
 }

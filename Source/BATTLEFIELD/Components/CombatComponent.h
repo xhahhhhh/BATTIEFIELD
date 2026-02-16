@@ -150,6 +150,8 @@ private:
 	float CrosshairAimFactor;
 	float CrosshairShootingFactor;
 
+	FVector End;
+	FHitResult HitResult;
 	FVector HitTarget;
 	FHUDPackage HUDPackage;
 

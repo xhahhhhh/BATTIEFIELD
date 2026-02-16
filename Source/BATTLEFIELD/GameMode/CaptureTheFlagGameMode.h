@@ -13,4 +13,5 @@ class BATTLEFIELD_API ACaptureTheFlagGameMode : public ATeamsGameMode
 public:
 	virtual void PlayerEliminated(class ABaseCharacter* EliminatedCharacter,ABasePlayerController* VictimController,ABasePlayerController* AttackerController)override;
 	void FlagCaptured(class AFlag* Flag,class AFlagZone* Zone);
+	virtual float CalculateDamage(AController* Attacker,AController* Victim,float BaseDamage)override;
 };

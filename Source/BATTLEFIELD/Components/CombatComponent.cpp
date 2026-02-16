@@ -67,7 +67,6 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 	if (Character && Character->IsLocallyControlled())
 	{
-		FHitResult HitResult;
 		TraceUnderCrosshairs(HitResult);
 		HitTarget = HitResult.ImpactPoint;
 		SetHUDCrossHairs(DeltaTime);
@@ -471,7 +470,7 @@ void UCombatComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 			Start += CrossHairWorldDirection * (DistacnceToCharacter + 100.f);
 		}
 
-		FVector End = Start + CrossHairWorldDirection * TRACE_LENGTH;
+		End = Start + CrossHairWorldDirection * TRACE_LENGTH;
 
 		GetWorld()->LineTraceSingleByChannel(
 			TraceHitResult,

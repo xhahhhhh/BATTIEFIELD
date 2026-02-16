@@ -1073,6 +1073,7 @@ AWeaponBase* ABaseCharacter::GetEquippedWeapon()
 FVector ABaseCharacter::GetHitTarget() const
 {
 	if (Combat == nullptr) return FVector();
+	if (Combat->HitTarget==FVector::ZeroVector)return Combat->End;
 	return Combat->HitTarget;
 }
 
