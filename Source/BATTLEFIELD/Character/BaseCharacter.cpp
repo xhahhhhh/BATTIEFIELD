@@ -314,8 +314,8 @@ void ABaseCharacter::MulticastElim_Implementation(bool bPlayerLeftGame)
 		BasePlayerController->SetHUDWeaponAmmo(0);
 	}
 	bElimmed = true;
-	// PlayElimMontage();
-	GetMesh()->SetSimulatePhysics(true);
+	PlayElimMontage();
+	GetMesh()->SetAllBodiesSimulatePhysics(true);
 	// if (DissolveMaterialInstance)
 	// {
 	// 	DynamicDissolveMaterialInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
@@ -382,6 +382,7 @@ void ABaseCharacter::ElimTimerFinished()
 	{
 		OnLeftGame.Broadcast();
 	}
+	GetMesh()->SetAllBodiesSimulatePhysics(false);
 }
 
 void ABaseCharacter::ServerLeaveGame_Implementation()

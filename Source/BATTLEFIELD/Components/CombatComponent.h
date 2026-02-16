@@ -121,6 +121,8 @@ private:
 	class ABasePlayerController* Controller;
 	UPROPERTY()
 	class APlayerHUD* HUD;
+	
+	FVector2D ViewportSize;
 
 	UPROPERTY(ReplicatedUsing = OnRep_EquippedWeapon)
 	AWeaponBase* EquippedWeapon;
