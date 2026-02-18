@@ -38,10 +38,11 @@ struct FPerformanceMetrics
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SurvivalTime = 0.0f;
 	
-	UFUNCTION(BlueprintPure, Category = "Performance")
 	float GetOverallPerformance() const
 	{
 		float Score = (KDA+DamageDone+HealingDone+ObjectiveScore+SurvivalTime)*0.3f;
 		return FMath::Clamp(Score, 0.f, 1.f);
 	}
 };
+
+

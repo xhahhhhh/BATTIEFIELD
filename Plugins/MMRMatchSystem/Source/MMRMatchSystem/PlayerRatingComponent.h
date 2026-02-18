@@ -3,8 +3,57 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "RatingAlgorithm.h"
 #include "PlayerRatingComponent.generated.h"
 
+struct FPerformanceMetrics;
+
+UENUM(BlueprintType)
+enum class ERatingAlgorithmType:uint8
+{
+	ELO UMETA(DisplayName = "ELO"),
+	MMR UMETA(DisplayName = "MMR"),
+	
+	MAX UMETA(DisplayName = "DefaultMax")
+};
+
+USTRUCT(BlueprintType)
+struct FPlayerRatingData
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(SaveGame)
+	float HiddenRating = 1500.f;
+	
+	UPROPERTY(SaveGame)
+	float Uncertainty = 400.f;
+	
+	UPROPERTY(SaveGame)
+	int32 GamesPlayed = 0;
+	
+	UPROPERTY(SaveGame)
+	int32 Wins = 0;
+	
+	UPROPERTY(SaveGame)
+	TArray<float> RecentPerformances;
+	
+	UPROPERTY(SaveGame)
+	TMap<FString, float> RoleProficiency;
+	
+	UPROPERTY(SaveGame)
+	TArray<float> RatingHistory;
+	
+	//连胜数
+	UPROPERTY(SaveGame)
+	int32 WinStreak = 0;
+	
+	//连败数
+	UPROPERTY(SaveGame)
+	int32 LoseStreak = 0;
+	
+	UPROPERTY(SaveGame)
+	FDateTime LastUpdateTime;
+};
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class MMRMATCHSYSTEM_API UPlayerRatingComponent : public UActorComponent
@@ -13,11 +62,46 @@ class MMRMATCHSYSTEM_API UPlayerRatingComponent : public UActorComponent
 
 public:
 	UPlayerRatingComponent();
+	void ConfigAlgorithmInstance();
 
-protected:
 	virtual void BeginPlay() override;
 
-public:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+	UFUNCTION(BlueprintCallable)
+	void SetRatingAlgorithm(ERatingAlgorithmType NewAlgorithmType);
+	
+	UFUNCTION(BlueprintCallable)
+	void UpdateRatingForTeamGame(
+		float TeamAverageRating,
+		float OpponentAverageRating,
+		bool bWon,
+		const FPerformanceMetrics& Performance,
+		const FString& Role = TEXT("")
+	);
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateRatingForDuel(float OpponentRating, bool bWon, float KFactor = -1.0f);
+
+	UFUNCTION(BlueprintPure)
+	float GetMatchmakingRating()const;
+	
+	UFUNCTION(BlueprintPure)
+	FString GetVisibleRank() const;
+	
+	UFUNCTION(BlueprintPure)
+	FLinearColor GetRankColor() const;
+	
+protected:
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Rating")
+	ERatingAlgorithmType AlgorithmType = ERatingAlgorithmType::MMR;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Rating")
+	class URatingConfigDataAsset* RatingConfig;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Rating",SaveGame)
+	FPlayerRatingData RatingData;
+	
+private:
+	TUniquePtr<IRatingAlgorithm> AlgorithmInstance;
+	
+	void UpdateStreak(bool bWon);
 };

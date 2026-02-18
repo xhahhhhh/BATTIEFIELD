@@ -436,6 +436,7 @@ void ABasePlayerController::SetHUDTime()
 			                 : PlayerGameMode;
 		if (PlayerGameMode)
 		{
+			LevelStartTime = PlayerGameMode->LevelStartingTime;
 			SecondsLeft = FMath::CeilToInt(PlayerGameMode->GetCountdownTime() + LevelStartTime);
 		}
 	}
