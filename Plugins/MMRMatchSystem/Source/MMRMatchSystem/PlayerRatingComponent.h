@@ -66,10 +66,8 @@ public:
 
 	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintCallable)
 	void SetRatingAlgorithm(ERatingAlgorithmType NewAlgorithmType);
-	
-	UFUNCTION(BlueprintCallable)
+
 	void UpdateRatingForTeamGame(
 		float TeamAverageRating,
 		float OpponentAverageRating,
@@ -78,30 +76,27 @@ public:
 		const FString& Role = TEXT("")
 	);
 
-	UFUNCTION(BlueprintCallable)
 	void UpdateRatingForDuel(float OpponentRating, bool bWon, float KFactor = -1.0f);
-
-	UFUNCTION(BlueprintPure)
 	float GetMatchmakingRating()const;
-	
-	UFUNCTION(BlueprintPure)
 	FString GetVisibleRank() const;
-	
-	UFUNCTION(BlueprintPure)
 	FLinearColor GetRankColor() const;
 	
 protected:
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Rating")
+	UPROPERTY(BlueprintReadOnly,Category="Rating")
 	ERatingAlgorithmType AlgorithmType = ERatingAlgorithmType::MMR;
 	
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Rating")
+	UPROPERTY(BlueprintReadOnly,Category="Rating")
 	class URatingConfigDataAsset* RatingConfig;
 	
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Rating",SaveGame)
+	UPROPERTY(BlueprintReadOnly,Category="Rating",SaveGame)
 	FPlayerRatingData RatingData;
 	
 private:
 	TUniquePtr<IRatingAlgorithm> AlgorithmInstance;
 	
 	void UpdateStreak(bool bWon);
+	
+public:
+	float GetUncertainty() const { return RatingData.Uncertainty; }
+	int32 GetWinStreak() const { return RatingData.WinStreak; }
 };
