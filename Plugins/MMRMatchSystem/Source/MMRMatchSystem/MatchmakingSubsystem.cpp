@@ -6,7 +6,7 @@
 void UMatchmakingSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	
+	//创建默认匹配策略
 	if (DefaultStrategyClass)
 	{
 		UObject* StrategyObj = NewObject<UObject>(this, DefaultStrategyClass);
@@ -17,6 +17,7 @@ void UMatchmakingSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		}
 	}
 	
+	//若没有则重新设置
 	if (!CurrentStrategy.GetInterface())
 	{
 		UDefaultMatchmakingStrategy* DefaultStrategy = NewObject<UDefaultMatchmakingStrategy>(this);
@@ -27,6 +28,7 @@ void UMatchmakingSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		}
 	}
 	
+	//设置定时器进行匹配
 	UWorld* World = GetWorld();
 	if (World)
 	{
@@ -38,7 +40,7 @@ void UMatchmakingSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 void UMatchmakingSubsystem::Deinitialize()
 {
-	
+	//销毁子系统实例时清除定时器并清除队列
 	UWorld* World = GetWorld();
 	if (World)
 	{
@@ -54,9 +56,11 @@ void UMatchmakingSubsystem::AddToQueue(APlayerController* Player, const FMatchma
 {
 	if (!Player)return;
 	
+	//获取玩家评分组件
 	UPlayerRatingComponent* RatingComp = Player->FindComponentByClass<UPlayerRatingComponent>();
 	if (!RatingComp)return;
 	
+	//创建玩家对局数据并加入匹配队列
 	FMatchmakingPlayerData Data;
 	Data.Player = Player;
 	Data.Rating = RatingComp->GetMatchmakingRating();
@@ -69,21 +73,27 @@ void UMatchmakingSubsystem::AddToQueue(APlayerController* Player, const FMatchma
 	
 }
 
+//将玩家移出匹配队列
 void UMatchmakingSubsystem::RemoveFromQueue(APlayerController* Player)
 {
 	Queue.Remove(Player);
 }
 
+//匹配中执行操作
 void UMatchmakingSubsystem::ProcessMatchmaking()
 {
+	//若少于两队人则返回
 	if (Queue.Num() < TargetTeamSize * 2) return; 
 	
 	if (!CurrentStrategy.GetInterface()) return;
 	
+	//调用创建的策略寻找对局
 	TArray<FMatchResult> Matches = CurrentStrategy->Execute_FindMatches(CurrentStrategy.GetObject(),Queue,TargetTeamSize);
 	
+	//处理匹配结果
 	for (const FMatchResult& Match : Matches)
 	{
+		//验证玩家是否在队列
 		bool bAllInQueue = true;
 		for (APlayerController* PlayerA : Match.TeamA)
 		{
@@ -102,6 +112,8 @@ void UMatchmakingSubsystem::ProcessMatchmaking()
 			}
 		}
 		if (!bAllInQueue)continue;
+		
+		//将玩家移除队列
 		for (APlayerController* Player : Match.TeamA) Queue.Remove(Player);
 		for (APlayerController* Player : Match.TeamB) Queue.Remove(Player);
 	}

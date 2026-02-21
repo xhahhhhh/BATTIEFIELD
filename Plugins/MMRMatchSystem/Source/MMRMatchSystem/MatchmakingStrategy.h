@@ -5,6 +5,7 @@
 #include "UObject/Interface.h"
 #include "MatchmakingStrategy.generated.h"
 
+//对局偏好，如常用角色、常选位置
 USTRUCT(BlueprintType)
 struct FMatchmakingPreferences
 {
@@ -15,6 +16,7 @@ struct FMatchmakingPreferences
 
 };
 
+//存储玩家对局数据
 USTRUCT(BlueprintType)
 struct FMatchmakingPlayerData
 {
@@ -44,6 +46,7 @@ struct FMatchmakingPlayerData
 	}
 };
 
+//匹配对局结果，双方玩家以及对局平均分
 USTRUCT(BlueprintType)
 struct FMatchResult
 {

@@ -14,18 +14,21 @@ void UPlayerRatingComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//初始化匹配配置
 	if (RatingConfig)
 	{
 		ConfigAlgorithmInstance();
 	}
 	else
 	{
+		//默认创建MMR
 		AlgorithmInstance = MakeUnique<FMMRAlgorithm>(32.f,400.f);
 	}
 }
 
 void UPlayerRatingComponent::SetRatingAlgorithm(ERatingAlgorithmType NewAlgorithmType)
 {
+	//设置算法类型
 	if (AlgorithmType == NewAlgorithmType) return;
 	AlgorithmType = NewAlgorithmType;
 	if (RatingConfig)
@@ -43,7 +46,7 @@ void UPlayerRatingComponent::UpdateRatingForTeamGame(float TeamAverageRating, fl
 	float NewUncertainty = RatingData.Uncertainty;
 	float RatingChange = 0.f;
 	
-	if (AlgorithmType == ERatingAlgorithmType::MMR)//MMR
+	if (AlgorithmType == ERatingAlgorithmType::MMR)//MMR算法计算对决表现
 	{
 		float UncertaintyDelta = 0.f;
 		NewRating = AlgorithmInstance->UpdateRatingWithPerformance(
@@ -68,6 +71,7 @@ void UPlayerRatingComponent::UpdateRatingForTeamGame(float TeamAverageRating, fl
 		RatingChange = NewRating - RatingData.HiddenRating;
 	}
 	
+	//返回对局后的数据
 	RatingData.HiddenRating = NewRating;
 	RatingData.Uncertainty = NewUncertainty;
 	RatingData.GamesPlayed++;
@@ -78,6 +82,7 @@ void UPlayerRatingComponent::UpdateRatingForTeamGame(float TeamAverageRating, fl
 	
 	UpdateStreak(bWon);
 	
+	//记录角色熟练度
 	if (!Role.IsEmpty() && AlgorithmType == ERatingAlgorithmType::MMR)
 	{
 		float &Proficiency = RatingData.RoleProficiency.FindOrAdd(Role,.5f);
@@ -86,6 +91,7 @@ void UPlayerRatingComponent::UpdateRatingForTeamGame(float TeamAverageRating, fl
 		Proficiency = FMath::Clamp(Proficiency * 0.9f + PerfScore * .1f, 0.0f, 1.0f);
 	}
 	
+	//更新最近表现
 	if (AlgorithmType == ERatingAlgorithmType::MMR)
 	{
 		RatingData.RecentPerformances.Add(Performance.GetOverallPerformance());

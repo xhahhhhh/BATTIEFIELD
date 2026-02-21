@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "PerformanceMetrics.generated.h"
 
+//游戏事件，如连杀、超神、一血，用以改变表现分
 USTRUCT(BlueprintType)
 struct FGameEvent
 {
@@ -18,6 +19,7 @@ struct FGameEvent
 	float Timestamp;
 };
 
+//对局表现参数
 USTRUCT(BlueprintType)
 struct FPerformanceMetrics
 {
@@ -38,6 +40,7 @@ struct FPerformanceMetrics
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SurvivalTime = 0.0f;
 	
+	//计算对局表现并限制到0-1
 	float GetOverallPerformance() const
 	{
 		float Score = (KDA+DamageDone+HealingDone+ObjectiveScore+SurvivalTime)*0.3f;

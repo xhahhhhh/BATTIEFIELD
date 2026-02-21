@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "PerformanceMetrics.h"
 
+//抽象父类，只定义不实现
 class IRatingAlgorithm
 {
 public:
@@ -26,8 +27,10 @@ public:
 		float& OutUncertaintyDelta
 	) const = 0;
 
+	//获取动态K因子
 	virtual float GetDynamicKFactor(float CurrentRating, int32 GamesPlayed, float Uncertainty) const = 0;
 
+	//获取对局表现
 	virtual float GetMatchmakingRating(float HiddenRating, float Uncertainty) const = 0;
 };
 

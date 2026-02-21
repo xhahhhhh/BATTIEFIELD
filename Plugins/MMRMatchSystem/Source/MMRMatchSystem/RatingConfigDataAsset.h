@@ -4,6 +4,7 @@
 #include "Engine/DataAsset.h"
 #include "RatingConfigDataAsset.generated.h"
 
+//ELO参数配置
 USTRUCT(BlueprintType)
 struct FELOConfig
 {
@@ -25,6 +26,7 @@ struct FELOConfig
 	float HighLevelKFactor = 16.f;
 };
 
+//MMR参数配置
 USTRUCT(BlueprintType)
 struct FMMRConfig
 {
@@ -46,6 +48,7 @@ struct FMMRConfig
 	float PerformanceImpact = 0.2f; 
 };
 
+//段位
 USTRUCT(BlueprintType)
 struct FRankTier
 {

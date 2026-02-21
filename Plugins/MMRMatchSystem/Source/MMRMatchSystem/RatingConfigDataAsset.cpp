@@ -10,6 +10,7 @@ FRankTier URatingConfigDataAsset::GetTierForRating(float Rating) const
 		Result = RankTiers[0];
 	}
 	
+	//根据分数定段
 	for (const FRankTier& Tier : RankTiers)
 	{
 		if (Rating>=Tier.MinRating && Rating<Tier.MaxRating)

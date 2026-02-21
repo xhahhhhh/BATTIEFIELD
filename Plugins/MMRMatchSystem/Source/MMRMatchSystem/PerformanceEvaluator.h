@@ -34,15 +34,16 @@ UCLASS(BlueprintType)
 class UPerformanceEvaluator:public UObject,public IPerformanceEvaluationStrategy
 {
 	GENERATED_BODY()
-	
-    typedef TMap<FString, float> FEvents;
 
 public:
+	//根据比赛中的事件计算表现分
 	virtual float EvaluatePerformance_Implementation(const TArray<FGameEvent>& PlayerEvents,const FString& Role) const override;
 	
+	//事件权重
 	UPROPERTY(EditDefaultsOnly, Category = "Config")
 	FRoleWeightConfig TotalEventWeights;
 	
+	//角色表现权重
 	UPROPERTY(EditDefaultsOnly, Category = "Config")
 	TMap<FString, FRoleWeightConfig> RoleSpecificWeights;
 };
