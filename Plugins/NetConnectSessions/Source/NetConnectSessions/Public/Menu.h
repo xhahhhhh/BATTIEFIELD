@@ -23,7 +23,7 @@ protected:
 	virtual bool Initialize() override;
 	virtual void NativeDestruct() override;
 
-	//Ϊ���˻Ự��ϵͳ���õĻص�����
+	//回调
 	UFUNCTION()
 	void OnCreateSession(bool bWasSuccessful);
 
@@ -36,6 +36,7 @@ protected:
 	void OnStartSession(bool bWasSuccessful);
 
 private:
+	//UI组件类
 	UPROPERTY(meta = (BindWidget))
 	UButton* HostButton;
 
@@ -57,6 +58,7 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UEditableTextBox* NumPlayersTextBox;
 
+	//UI绑定回调
 	UFUNCTION()
 	void HostButtonClicked();
 

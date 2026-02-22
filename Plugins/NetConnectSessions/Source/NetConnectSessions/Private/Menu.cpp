@@ -14,10 +14,13 @@ void UMenu::MenuSetup(int32 NumberofPublicConnections, FString TypeOfMatch, FStr
 	PathToLobby = FString::Printf(TEXT("%s?listen"), *LobbyPath);
 	// NumPublicConnections = NumberofPublicConnections;
 	// MatchType = TypeOfMatch;
+	
+	//启用UI并打印在屏幕上
 	AddToViewport();
 	SetVisibility(ESlateVisibility::Visible);
 	SetIsFocusable(true);
 
+	//配置用户输入以及鼠标
 	UWorld* World = GetWorld();
 	if (World)
 	{
@@ -32,6 +35,7 @@ void UMenu::MenuSetup(int32 NumberofPublicConnections, FString TypeOfMatch, FStr
 		}
 	}
 
+	//获取多人会话子系统并绑定回调
 	UGameInstance* GameInstance = GetGameInstance();
 	if (GameInstance)
 	{
@@ -48,8 +52,10 @@ void UMenu::MenuSetup(int32 NumberofPublicConnections, FString TypeOfMatch, FStr
 	}
 }
 
+
 bool UMenu::Initialize()
 {
+	//初始化绑定UI回调
 	if (!Super::Initialize())
 	{
 		return false;
@@ -91,10 +97,12 @@ bool UMenu::Initialize()
 
 void UMenu::NativeDestruct()
 {
+	//销毁
 	MenuTearDown();
 	Super::NativeDestruct();
 }
 
+//创建会话完成时回调
 void UMenu::OnCreateSession(bool bWasSuccessful)
 {
 	if (bWasSuccessful)
@@ -248,6 +256,7 @@ void UMenu::NumPlayersTextBoxWrited(const FText& Text)
 	NumPublicConnections = FCString::Atoi(*Text.ToString());
 }
 
+//UI界面销毁并设置输入
 void UMenu::MenuTearDown()
 {
 	RemoveFromParent();

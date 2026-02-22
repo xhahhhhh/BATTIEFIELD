@@ -7,10 +7,7 @@
 #include "Interfaces/OnlineSessionInterface.h"
 #include "MultiPlayerSessionsSubsystem.generated.h"
 
-/**
- * 
- */
- //�Զ���ί�����ڲ˵����а󶨻ص�
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiPlayerOnCreateSessionComplete,bool,bWasSuccessful);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FMultiPlayerOnFindSessionsComplete,const TArray<FOnlineSessionSearchResult>& SessionResults,bool bWasSuccessful);
 DECLARE_MULTICAST_DELEGATE_OneParam(FMultiPlayerOnJoinSessionComplete,EOnJoinSessionCompleteResult::Type Result);
@@ -25,14 +22,14 @@ class NETCONNECTSESSIONS_API UMultiPlayerSessionsSubsystem : public UGameInstanc
 public:
 	UMultiPlayerSessionsSubsystem();
 
-	//�˵��ദ��Ự����
+	//会话操作
 	void CreateSession(int32 NumPublicConnections, FString MatchType);
 	void FindSessions(int32 MaxSearchResults);
 	void JoinSession(const FOnlineSessionSearchResult& SessionResult);
 	void DestroySession();
 	void StartSession();
 
-	//Ϊ�˵��๫����ί��
+	//执行结束回调
 	FMultiPlayerOnCreateSessionComplete MultiPlayerOnCreateSessionComplete;
 	FMultiPlayerOnFindSessionsComplete MultiPlayerOnFindSessionsComplete;
 	FMultiPlayerOnJoinSessionComplete MultiPlayerOnJoinSessionComplete;
@@ -40,7 +37,7 @@ public:
 	FMultiPlayerOnStartSessionComplete MultiPlayerOnStartSessionComplete;
 
 protected:
-	//�ڲ�ί�лص�������ӵ����߻Ự�ӿڴ����б�
+	//多人会话回调
 	void OnCreateSessionComplete(FName SessionName,bool bWasSuccessful);
 	void OnFindSessionsComplete(bool bWasSuccessful);
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
@@ -48,12 +45,15 @@ protected:
 	void OnStartSessionComplete(FName SessionName, bool bWasSuccessful);
 
 private:
+	//会话接口类
 	IOnlineSessionPtr SessionInterface;
+	//会话设置用于创建会话
 	TSharedPtr<FOnlineSessionSettings> LastSessionSettings;
+	//会话搜索用于寻找现有会话
 	TSharedPtr<FOnlineSessionSearch> LastSessionSearch;
 
 
-	//�󶨻ص��Ự���ܵ�ί��,��ӵ����߻Ự�ӿڴ����б�
+	//委托句柄及委托
 	FOnCreateSessionCompleteDelegate CreateSessionCompleteDelegate;
 	FDelegateHandle CreateSessionCompleteDelegateHandle;
 
@@ -75,7 +75,7 @@ private:
 	
 	int32 DesiredNumPublicConnections{};
 	FString DesiredMatchType{};
-	
+
 public:
 	int32 GetDesiredNumPublicConnections() const { return DesiredNumPublicConnections; }
 	FString GetDesiredMatchType() const { return DesiredMatchType; }
