@@ -8,7 +8,7 @@ public class BATTLEFIELD : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput","Niagara","NetConnectSessions","OnlineSubsystem","OnlineSubsystemSteam" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput","Niagara","NetConnectSessions","OnlineSubsystem","OnlineSubsystemSteam","SteamSockets" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

@@ -8,7 +8,7 @@
 void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
-
+	bUseSeamlessTravel = true;
 	int32 NumberOfPlayers = GameState.Get()->PlayerArray.Num();
 
 	UGameInstance* GameInstance = GetGameInstance();
@@ -22,20 +22,18 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 			UWorld* World = GetWorld();
 			if (World)
 			{
-				bUseSeamlessTravel = true;
-
 				FString MatchType = Subsystem->GetDesiredMatchType();
 				if (MatchType == "FreeForAll")
 				{
-					World->ServerTravel(FString("/Game/Maps/Train?listen"));
+					World->ServerTravel(FString("/Game/Maps/Dessert?listen"));
 				}
 				else if (MatchType == "Teams")
 				{
-					World->ServerTravel(FString("/Game/Maps/Train?listen"));
+					World->ServerTravel(FString("/Game/Maps/Dessert?listen"));
 				}
 				else if (MatchType == "CaptureTheFlag")
 				{
-					World->ServerTravel(FString("/Game/Maps/Train?listen"));
+					World->ServerTravel(FString("/Game/Maps/Dessert?listen"));
 				}
 			}
 		}

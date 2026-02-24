@@ -2,9 +2,9 @@
 
 namespace  Announcement
 {
-	const FString NewMatchStartsIn("等待下一次对局");
-	const FString ThereIsNoWinner("无获胜者");
-	const FString YouAreTheWinner("恭喜你为获胜者");
+	const FString NewMatchStartsIn(TEXT("等待下一次对局"));
+	const FString ThereIsNoWinner(TEXT("无获胜者"));
+	const FString YouAreTheWinner(TEXT("恭喜你为获胜者"));
 	const FString PlayersTiedForTheWin(TEXT("获胜者:"));
 	const FString TeamsTiedForTheWin(TEXT("平局"));
 	const FString RedTeam(TEXT("红队"));

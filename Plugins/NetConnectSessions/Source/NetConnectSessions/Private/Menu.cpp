@@ -5,7 +5,9 @@
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "MultiplayerSessionsSubsystem.h"
+#include "OnlineSubsystemUtils.h"
 #include "Components/CheckBox.h"
 #include "Components/EditableTextBox.h"
 
@@ -107,19 +109,22 @@ void UMenu::OnCreateSession(bool bWasSuccessful)
 {
 	if (bWasSuccessful)
 	{
+		FString Message = FString::Printf(TEXT("Session Created: %s,%d"),*MatchType,NumPublicConnections);
 		if (GEngine)
 		{
+			
 			GEngine->AddOnScreenDebugMessage(
 				-1,
 				15.f,
 				FColor::Yellow,
-				TEXT("Session Created")
+				Message
 			);
 		}
 		UWorld* World = GetWorld();
+		FString TravelURL = PathToLobby + TEXT("?bShouldSeamlesslyTravel=false");
 		if (World)
 		{
-			World->ServerTravel(PathToLobby);
+			World->ServerTravel(TravelURL);
 		}
 	}
 	else
@@ -159,15 +164,30 @@ void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResu
 
 void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
 {
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-
+	IOnlineSubsystem* Subsystem = Online::GetSubsystem(GetWorld());
+	if (GEngine)
+	{
+		FString Message = FString::Printf(TEXT("JoinSession Result : %d"),Result);
+		GEngine->AddOnScreenDebugMessage(-1,
+				15.f,
+				FColor::Yellow,
+				Message
+				);
+	}
 	if (Subsystem)
 	{
 		IOnlineSessionPtr SessionInterface = Subsystem->GetSessionInterface();
 		if (SessionInterface.IsValid())
 		{
 			FString Address;
-			if (SessionInterface->GetResolvedConnectString(NAME_GameSession, Address))
+			bool bGotAddress = SessionInterface->GetResolvedConnectString(NAME_GameSession, Address);
+			FString Message = FString::Printf(TEXT("Travel Failed : %s"),*Address);
+			GEngine->AddOnScreenDebugMessage(-1,
+			15.f,
+			FColor::Yellow,
+			Message
+			);
+			if (bGotAddress)
 			{
 				APlayerController* PlayerController = GetGameInstance()->GetFirstLocalPlayerController();
 				if (PlayerController)

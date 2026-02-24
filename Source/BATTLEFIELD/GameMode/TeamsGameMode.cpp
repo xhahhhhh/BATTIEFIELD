@@ -88,7 +88,7 @@ float ATeamsGameMode::CalculateDamage(AController* Attacker, AController* Victim
 	ABasePlayerState* AttackerPState = Attacker->GetPlayerState<ABasePlayerState>();
 	ABasePlayerState* VictimPState = Victim->GetPlayerState<ABasePlayerState>();
 	if (AttackerPState == nullptr || VictimPState == nullptr)return BaseDamage;
-	if (VictimPState == AttackerPState)return BaseDamage;
+	if (VictimPState == AttackerPState)return 0.f;
 	if (AttackerPState->GetTeam() == VictimPState->GetTeam()) return  0.f;
 	return BaseDamage;
 }

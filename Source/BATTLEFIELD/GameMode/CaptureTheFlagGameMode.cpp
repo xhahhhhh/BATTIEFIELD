@@ -6,7 +6,6 @@
 #include "BATTLEFIELD/Weapon/Flag.h"
 #include "Kismet/GameplayStatics.h"
 
-class ABaseGameState;
 
 void ACaptureTheFlagGameMode::PlayerEliminated(class ABaseCharacter* EliminatedCharacter,
                                                ABasePlayerController* VictimController, ABasePlayerController* AttackerController)

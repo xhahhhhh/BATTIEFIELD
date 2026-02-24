@@ -30,7 +30,8 @@ public class NetConnectSessions : ModuleRules
 				"Slate",
 				"SlateCore",
                 "OnlineSubsystem",
-                "OnlineSubsystemSteam"
+                "OnlineSubsystemSteam",
+                "SteamSockets"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

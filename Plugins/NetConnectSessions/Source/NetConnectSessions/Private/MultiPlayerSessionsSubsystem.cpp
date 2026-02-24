@@ -5,6 +5,8 @@
 #include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystemUtils.h"
+#include "Interfaces/OnlineSessionInterface.h"
+#include "Online/OnlineSessionNames.h"
 
 //构造初始化会话委托并绑定回调
 UMultiPlayerSessionsSubsystem::UMultiPlayerSessionsSubsystem() :
@@ -89,7 +91,7 @@ void UMultiPlayerSessionsSubsystem::FindSessions(int32 MaxSearchResults)
 	LastSessionSearch->MaxSearchResults = MaxSearchResults;
 	IOnlineSubsystem* Subsystem = Online::GetSubsystem(GetWorld());
 	LastSessionSearch->bIsLanQuery = Subsystem->GetSubsystemName() == "NULL" ? true : false;
-	LastSessionSearch->QuerySettings.Set(FName("SEARCH_PRESENCE"), true, EOnlineComparisonOp::Equals);
+	LastSessionSearch->QuerySettings.Set(SEARCH_LOBBIES, true, EOnlineComparisonOp::Equals);
 	
 	//以下执行操作与创建会话同理
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
@@ -177,7 +179,7 @@ void UMultiPlayerSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOn
 	//同理
 	if (SessionInterface)
 	{
-		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(FindSessionsCompleteDelegateHandle);
+		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
 	}
 	MultiPlayerOnJoinSessionComplete.Broadcast(Result);
 }

@@ -670,7 +670,7 @@ FString ABasePlayerController::GetInfoText(const TArray<ABasePlayerState*>& Play
 	}
 	else if (Players.Num() == 1)
 	{
-		InfoTextString = FString::Printf(TEXT("获胜者:\n%s"), *Players[0]->GetPlayerName());
+		InfoTextString = FString::Printf(TEXT("获胜者:\n %s"), *Players[0]->GetPlayerName());
 	}
 	else if (Players.Num() > 1)
 	{
@@ -678,7 +678,7 @@ FString ABasePlayerController::GetInfoText(const TArray<ABasePlayerState*>& Play
 		InfoTextString.Append(FString("\n"));
 		for (auto TopPlayer : Players)
 		{
-			InfoTextString.Append(FString::Printf(TEXT("%s\n"), *TopPlayer->GetPlayerName()));
+			InfoTextString.Append(FString::Printf(TEXT("%s \n"), *TopPlayer->GetPlayerName()));
 		}
 	}
 	return InfoTextString;
