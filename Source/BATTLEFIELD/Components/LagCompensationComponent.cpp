@@ -119,7 +119,9 @@ FServerSideRewindResult ULagCompensationComponent::ProjectileConfirmHit(const FF
                                                                         float HitTime)
 {
 	FFramePackage CurrentFrame;
+	//预存当前位置
 	CacheBoxPositions(HitCharacter, CurrentFrame);
+	//将受击目标移动到射击时间的位置
 	MoveBoxes(HitCharacter, Package);
 	EnableCharacterMeshCollision(HitCharacter, ECollisionEnabled::NoCollision);
 
@@ -412,6 +414,7 @@ FFramePackage ULagCompensationComponent::GetFrameToCheck(ABaseCharacter* HitChar
 		bShouldInterplate = false;
 	}
 
+	//双端链表
 	TDoubleLinkedList<FFramePackage>::TDoubleLinkedListNode* Younger = History.GetHead();
 	TDoubleLinkedList<FFramePackage>::TDoubleLinkedListNode* Older = Younger;
 	while (Older->GetValue().Time > HitTime)

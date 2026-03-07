@@ -76,7 +76,7 @@ ABaseCharacter::ABaseCharacter()
 	AttachedGrenade->SetupAttachment(GetMesh(), FName("LeftHandSocket"));
 	AttachedGrenade->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	//用于服务器倒带的命中框
+	//伤害检测碰撞体
 	head = CreateDefaultSubobject<UBoxComponent>(TEXT("Head"));
 	head->SetupAttachment(GetMesh(), FName("head"));
 	HitCollisionBoxes.Add(FName("head"), head);
@@ -153,6 +153,7 @@ ABaseCharacter::ABaseCharacter()
 	foot_r->SetupAttachment(GetMesh(), FName("foot_r"));
 	HitCollisionBoxes.Add(FName("foot_r"), foot_r);
 
+	//伤害碰撞盒存入键值对
 	for (auto& Box : HitCollisionBoxes)
 	{
 		if (Box.Value)
@@ -179,6 +180,7 @@ void ABaseCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
+	//对一系列actor组件进行初始化
 	if (Combat)
 	{
 		Combat->Character = this;
@@ -223,6 +225,7 @@ void ABaseCharacter::PlayElimMontage()
 
 void ABaseCharacter::PlayReloadMontage()
 {
+	//播放换弹动画(根据武器的不同)
 	if (Combat == nullptr || Combat->EquippedWeapon == nullptr)return;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && ReloadMontage)
@@ -275,6 +278,7 @@ void ABaseCharacter::PlaySwapMontage()
 	}
 }
 
+//移动改变时的回调
 void ABaseCharacter::OnRep_ReplicatedMovement()
 {
 	Super::OnRep_ReplicatedMovement();
@@ -282,8 +286,10 @@ void ABaseCharacter::OnRep_ReplicatedMovement()
 	TimeSinceLastMovementReplication = 0.f;
 }
 
+
 void ABaseCharacter::Elim(bool bPlayerLeftGame)
 {
+	//死亡掉落武器并广播给所有客户端
 	DropOrDestroyWeapons();
 	MulticastElim(bPlayerLeftGame);
 }
@@ -808,7 +814,7 @@ void ABaseCharacter::CalculateAO_Pitch()
 	AO_Pitch = GetBaseAimRotation().Pitch;
 	if (AO_Pitch > 90.f && !IsLocallyControlled())
 	{
-		//[270,360]ӳ�䵽[-90,0]
+		//将Pitch在[270,360]的范围转换到[-90,0]
 		FVector2D InRange(270.f, 360.f);
 		FVector2D OutRange(-90.f, 0.f);
 		AO_Pitch = FMath::GetMappedRangeValueClamped(InRange, OutRange, AO_Pitch);

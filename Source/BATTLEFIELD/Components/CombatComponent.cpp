@@ -99,7 +99,7 @@ void UCombatComponent::SetHUDCrossHairs(float DeltaTime)
 				HUDPackage.CrosshairsTop = nullptr;
 				HUDPackage.CrosshairsButtom = nullptr;
 			}
-			//����׼��ɢ��
+			//计算人物移动并根据速度计算准心的扩张程度
 			FVector2D WalkSpeedRange(0.f, Character->GetCharacterMovement()->MaxWalkSpeed);
 			FVector2D VelocityMultiplierRange(0.f, 1.f);
 			FVector Velocity = Character->GetVelocity();

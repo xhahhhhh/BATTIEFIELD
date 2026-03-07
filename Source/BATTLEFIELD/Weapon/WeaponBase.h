@@ -150,17 +150,17 @@ public:
 	UPROPERTY(EditAnywhere, Category = CrossHairs)
 	UTexture2D* CrosshairsButtom;
 
-	//��׼����
+	//设置瞄准状态下的Fov
 	UPROPERTY(EditAnywhere)
 	float ZoomenFOV = 30.f;
 
 	UPROPERTY(EditAnywhere)
 	float ZoomInterpSpeed = 20.f;
 
-	//ȫ�Զ�
+	//射速参数
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	float FireDelay = .15f;
-
+	//是否开启全自动
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	bool bAutomatic = true;
 	

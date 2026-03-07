@@ -80,7 +80,7 @@ void UBaseAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			RightHandRotation = FMath::RInterpTo(RightHandRotation, LookAtRotation, DeltaSeconds, 30.f);
 		}
 
-		//设置是否开启IK解算的规则
+		//设置Fabrik条件
 		bUseFABRIK = OwningCharacter->GetCombatState() == ECombatState::ECS_Unoccupied;
 		bool bFabrik = OwningCharacter->IsLocallyControlled() && OwningCharacter->GetCombatState() !=
 			ECombatState::ECS_ThrowingGrenade && OwningCharacter->GetCombatState() != ECombatState::ECS_SwappingWeapons
