@@ -338,7 +338,7 @@ void ULagCompensationComponent::ResetHitBoxes(ABaseCharacter* HitCharacter, cons
 void ULagCompensationComponent::EnableCharacterMeshCollision(ABaseCharacter* HitCharacter,
                                                              ECollisionEnabled::Type CollisionEnabled)
 {
-	if (HitCharacter && Character->GetMesh())
+	if (HitCharacter && HitCharacter->GetMesh())
 	{
 		HitCharacter->GetMesh()->SetCollisionEnabled(CollisionEnabled);
 	}

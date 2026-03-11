@@ -511,7 +511,7 @@ void ABaseCharacter::SetSpawnPoint()
 	if (HasAuthority() && BasePlayerState->GetTeam() != ETeam::ET_NoTeam)
 	{
 		TArray<AActor*> PlayerStarts;
-		UGameplayStatics::GetAllActorsOfClass(this, ABaseCharacter::StaticClass(), PlayerStarts);
+		UGameplayStatics::GetAllActorsOfClass(this, ATeamPlayerStart::StaticClass(), PlayerStarts);
 		TArray<ATeamPlayerStart*> TeamPlayerStarts;
 		for (auto Start : PlayerStarts)
 		{

@@ -449,7 +449,9 @@ void UCombatComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 		GEngine->GameViewport->GetViewportSize(ViewportSize);
 	}
 
+	//获取屏幕中心的坐标
 	FVector2D CrossHairLocation(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
+	//将屏幕中心的坐标转换为世界坐标
 	FVector CrossHairWorldPosition;
 	FVector CrossHairWorldDirection;
 	bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
@@ -458,7 +460,7 @@ void UCombatComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 		CrossHairWorldPosition,
 		CrossHairWorldDirection
 	);
-
+	
 	if (bScreenToWorld)
 	{
 		FVector Start = CrossHairWorldPosition;
@@ -469,8 +471,16 @@ void UCombatComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 			Start += CrossHairWorldDirection * (DistacnceToCharacter + 100.f);
 		}
 
+		//计算出击点的坐标
 		End = Start + CrossHairWorldDirection * TRACE_LENGTH;
-
+		
+		if (!TraceHitResult.bBlockingHit)
+		{
+			TraceHitResult.ImpactPoint = End;
+			HitTarget = End;
+		}
+		
+		//射线检测得到Hit结果
 		GetWorld()->LineTraceSingleByChannel(
 			TraceHitResult,
 			Start,
