@@ -1,18 +1,24 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+/**
+ * @file MMRMatchSystem.cpp
+ * @brief MMR匹配系统插件模块实现
+ */
+
 #include "MMRMatchSystem.h"
 
 #define LOCTEXT_NAMESPACE "FMMRMatchSystemModule"
 
 void FMMRMatchSystemModule::StartupModule()
 {
-	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+	// 此代码在模块加载到内存后执行
+	// 具体时机在.uplugin文件中的模块配置里指定
 }
 
 void FMMRMatchSystemModule::ShutdownModule()
 {
-	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
-	// we call this function before unloading the module.
+	// 此函数在关闭时调用以清理资源
+	// 对于支持动态重载的模块，在卸载前调用此函数
 }
 
 #undef LOCTEXT_NAMESPACE

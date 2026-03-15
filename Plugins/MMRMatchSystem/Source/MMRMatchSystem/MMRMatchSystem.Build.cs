@@ -1,36 +1,45 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+/**
+ * @file MMRMatchSystem.Build.cs
+ * @brief MMR匹配系统插件构建设置
+ * 
+ * 定义插件的编译依赖和配置
+ */
+
 using UnrealBuildTool;
 
 public class MMRMatchSystem : ModuleRules
 {
 	public MMRMatchSystem(ReadOnlyTargetRules Target) : base(Target)
 	{
+		// 使用显式或共享预编译头
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
+		// 公共包含路径
 		PublicIncludePaths.AddRange(
 			new string[] {
-				// ... add public include paths required here ...
+				// ... 添加需要的公共包含路径 ...
 			}
-			);
+		);
 				
-		
+		// 私有包含路径
 		PrivateIncludePaths.AddRange(
 			new string[] {
-				// ... add other private include paths required here ...
+				// ... 添加需要的私有包含路径 ...
 			}
-			);
-			
+		);
 		
+		// 公共依赖模块
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
 				"Core",
-				// ... add other public dependencies that you statically link with here ...
+				// ... 其他公共依赖模块 ...
 			}
-			);
-			
+		);
 		
+		// 私有依赖模块
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
@@ -38,16 +47,16 @@ public class MMRMatchSystem : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				// ... add private dependencies that you statically link with here ...	
+				// ... 其他私有依赖模块 ...
 			}
-			);
+		);
 		
-		
+		// 动态加载模块
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
 			{
-				// ... add any modules that your module loads dynamically here ...
+				// ... 动态加载的模块 ...
 			}
-			);
+		);
 	}
 }
