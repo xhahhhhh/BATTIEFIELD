@@ -1,5 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+/**
+ * @file MultiPlayerSessionsSubsystem.cpp
+ * @brief 多人游戏会话子系统实现文件
+ * @details 实现会话的创建、查找、加入、销毁等核心功能
+ */
 
 #include "MultiPlayerSessionsSubsystem.h"
 #include "OnlineSubsystem.h"
@@ -8,7 +11,10 @@
 #include "Interfaces/OnlineSessionInterface.h"
 #include "Online/OnlineSessionNames.h"
 
-//构造初始化会话委托并绑定回调
+/**
+ * @brief 构造函数
+ * @details 初始化所有会话委托，并获取在线子系统的会话接口
+ */
 UMultiPlayerSessionsSubsystem::UMultiPlayerSessionsSubsystem() :
 	CreateSessionCompleteDelegate(
 		FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionComplete)),
@@ -20,28 +26,38 @@ UMultiPlayerSessionsSubsystem::UMultiPlayerSessionsSubsystem() :
 	StartSessionCompleteDelegate(
 		FOnStartSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnStartSessionComplete))
 {
-	//获取在线子系统
+	/** @brief 获取全局在线子系统实例 */
 	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
 
 	if (Subsystem)
 	{
-		//获取会话接口指针
+		/** @brief 从子系统获取会话管理接口 */
 		SessionInterface = Subsystem->GetSessionInterface();
 	}
 }
 
+/**
+ * @brief 创建新的游戏会话
+ * @param NumPublicConnections 最大公共连接数（玩家数）
+ * @param MatchType 游戏匹配类型标识
+ * @details 
+ * - 检查是否已存在会话，存在则先销毁后重建
+ * - 配置会话设置（LAN模式、连接数、广播等）
+ * - 通过OnlineSubsystem创建会话
+ */
 void UMultiPlayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FString MatchType)
 {
-	//设置玩家连接数以及匹配类型
+	/** @brief 保存期望的会话参数 */
 	DesiredNumPublicConnections = NumPublicConnections;
 	DesiredMatchType = MatchType;
-	if (!SessionInterface.IsValid())return;
+	
+	if (!SessionInterface.IsValid()) return;
 
-	//检查是否已存在名为NAME_GameSession的会话
+	/** @brief 检查是否已存在同名会话 */
 	auto ExistingSession = SessionInterface->GetNamedSession(NAME_GameSession);
 	if (ExistingSession != nullptr)
 	{
-		//标记销毁后需要重新创建，并保存本次参数
+		/** @brief 标记需要销毁后重建，保存参数 */
 		bCreateSessionOnDestroy = true;
 		LastNumPublicConnections = NumPublicConnections;
 		LastMatchType = MatchType;
@@ -49,80 +65,99 @@ void UMultiPlayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FS
 		return;
 	}
 
-	//将创建会话完成的委托添加到会话接口，并保存句柄以便后续移除
+	/** @brief 向会话接口注册创建完成委托 */
 	CreateSessionCompleteDelegateHandle = SessionInterface->AddOnCreateSessionCompleteDelegate_Handle(
 		CreateSessionCompleteDelegate);
 
-	//创建会话设置对象并设置参数
+	/** @brief 创建并配置会话设置 */
 	LastSessionSettings = MakeShareable(new FOnlineSessionSettings());
 	IOnlineSubsystem* Subsystem = Online::GetSubsystem(GetWorld());
+	
+	/** @brief 根据子系统类型决定是否为LAN模式（NULL子系统使用LAN） */
 	LastSessionSettings->bIsLANMatch = Subsystem->GetSubsystemName() == "NULL" ? true : false;
 	LastSessionSettings->NumPublicConnections = NumPublicConnections;
-	LastSessionSettings->bAllowJoinInProgress = true;
-	LastSessionSettings->bAllowJoinViaPresence = true;
-	LastSessionSettings->bShouldAdvertise = true;
-	LastSessionSettings->bUsesPresence = true;
+	LastSessionSettings->bAllowJoinInProgress = true;  // 允许游戏进行中加入
+	LastSessionSettings->bAllowJoinViaPresence = true; // 允许通过Presence加入
+	LastSessionSettings->bShouldAdvertise = true;      // 广播会话让其他玩家发现
+	LastSessionSettings->bUsesPresence = true;         // 使用Presence功能
 	LastSessionSettings->Set(FName("MatchType"), MatchType, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 	LastSessionSettings->BuildUniqueId = 1;
-	LastSessionSettings->bUseLobbiesIfAvailable = true;
+	LastSessionSettings->bUseLobbiesIfAvailable = true; // 优先使用大厅系统
 
-	//获取本地玩家并创建本地会话
+	/** @brief 获取本地玩家并创建会话 */
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
 	if (!SessionInterface->CreateSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession,
 	                                     *LastSessionSettings))
 	{
-		//会话创建失败清除委托
+		/** @brief 创建失败，清理委托并广播失败 */
 		SessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegateHandle);
-
-		//广播创建会话失败
 		MultiPlayerOnCreateSessionComplete.Broadcast(false);
 	}
 }
 
+/**
+ * @brief 查找可用的游戏会话
+ * @param MaxSearchResults 最大搜索结果数量
+ * @details 搜索局域网或在线会话，结果通过委托广播
+ */
 void UMultiPlayerSessionsSubsystem::FindSessions(int32 MaxSearchResults)
 {
 	if (!SessionInterface.IsValid()) return;
-	//将寻找会话完成的委托添加到会话接口，并保存句柄以便后续移除
+	
+	/** @brief 注册查找完成委托 */
 	FindSessionsCompleteDelegateHandle = SessionInterface->AddOnFindSessionsCompleteDelegate_Handle(
 		FindSessionsCompleteDelegate);
 
-	//创建会话搜索对象并设置参数
+	/** @brief 创建搜索配置 */
 	LastSessionSearch = MakeShareable(new FOnlineSessionSearch());
 	LastSessionSearch->MaxSearchResults = MaxSearchResults;
+	
+	/** @brief 根据子系统决定是否为LAN搜索 */
 	IOnlineSubsystem* Subsystem = Online::GetSubsystem(GetWorld());
 	LastSessionSearch->bIsLanQuery = Subsystem->GetSubsystemName() == "NULL" ? true : false;
 	LastSessionSearch->QuerySettings.Set(SEARCH_LOBBIES, true, EOnlineComparisonOp::Equals);
 	
-	//以下执行操作与创建会话同理
+	/** @brief 执行搜索 */
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
 	if (!SessionInterface->FindSessions(*LocalPlayer->GetPreferredUniqueNetId(), LastSessionSearch.ToSharedRef()))
 	{
+		/** @brief 搜索失败，清理委托并广播空结果 */
 		SessionInterface->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteDelegateHandle);
 		MultiPlayerOnFindSessionsComplete.Broadcast(TArray<FOnlineSessionSearchResult>(), false);
 	}
 }
 
+/**
+ * @brief 加入指定的游戏会话
+ * @param SessionResult 要加入的会话搜索结果
+ * @details 尝试加入指定的会话，结果通过委托广播
+ */
 void UMultiPlayerSessionsSubsystem::JoinSession(const FOnlineSessionSearchResult& SessionResult)
 {
-	//判断会话接口是否存在，若不存在则广播
+	/** @brief 检查会话接口有效性 */
 	if (!SessionInterface.IsValid())
 	{
 		MultiPlayerOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError);
 		return;
 	}
 
-	// 添加加入完成的委托句柄
+	/** @brief 注册加入完成委托 */
 	JoinSessionCompleteDelegateHandle = SessionInterface->AddOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegate);
 	
-	//以下执行操作与创建会话同理
+	/** @brief 执行加入操作 */
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
 	if (!SessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, SessionResult))
 	{
+		/** @brief 加入失败，清理委托并广播错误 */
 		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(FindSessionsCompleteDelegateHandle);
 		MultiPlayerOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError);
 	}
 }
 
+/**
+ * @brief 销毁当前游戏会话
+ * @details 销毁名为NAME_GameSession的会话，结果通过委托广播
+ */
 void UMultiPlayerSessionsSubsystem::DestroySession()
 {
 	if (!SessionInterface.IsValid())
@@ -131,40 +166,55 @@ void UMultiPlayerSessionsSubsystem::DestroySession()
 		return;
 	}
 
-	// 添加销毁完成的委托句柄
+	/** @brief 注册销毁完成委托 */
 	DestroySessionCompleteDelegateHandle = SessionInterface->AddOnDestroySessionCompleteDelegate_Handle(
 		DestroySessionCompleteDelegate);
-	//以下执行操作与创建会话同理
+	
+	/** @brief 执行销毁操作 */
 	if (!SessionInterface->DestroySession(NAME_GameSession))
 	{
+		/** @brief 销毁失败，清理委托并广播失败 */
 		SessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegateHandle);
 		MultiPlayerOnDestroySessionComplete.Broadcast(false);
 	}
 }
 
+/**
+ * @brief 启动游戏会话
+ * @details 当前为空实现
+ */
 void UMultiPlayerSessionsSubsystem::StartSession()
 {
 }
 
+/**
+ * @brief 创建会话完成回调
+ * @param SessionName 会话名称
+ * @param bWasSuccessful 是否成功
+ * @details 清理委托并广播结果
+ */
 void UMultiPlayerSessionsSubsystem::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
 {
-	//无论是否创建成功都清理委托
 	if (SessionInterface)
 	{
 		SessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegateHandle);
 	}
-	//广播
 	MultiPlayerOnCreateSessionComplete.Broadcast(bWasSuccessful);
 }
 
+/**
+ * @brief 查找会话完成回调
+ * @param bWasSuccessful 是否成功
+ * @details 清理委托并广播搜索结果
+ */
 void UMultiPlayerSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 {
-	//无论是否查找成功都清理委托
 	if (SessionInterface)
 	{
 		SessionInterface->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteDelegateHandle);
 	}
-	// 如果没有搜索结果，也视为失败并广播空数组
+	
+	/** @brief 无搜索结果也视为失败 */
 	if (LastSessionSearch->SearchResults.Num() <= 0)
 	{
 		MultiPlayerOnFindSessionsComplete.Broadcast(TArray<FOnlineSessionSearchResult>(), false);
@@ -174,9 +224,14 @@ void UMultiPlayerSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 	MultiPlayerOnFindSessionsComplete.Broadcast(LastSessionSearch->SearchResults, bWasSuccessful);
 }
 
+/**
+ * @brief 加入会话完成回调
+ * @param SessionName 会话名称
+ * @param Result 加入结果类型
+ * @details 清理委托并广播结果
+ */
 void UMultiPlayerSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
-	//同理
 	if (SessionInterface)
 	{
 		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
@@ -184,14 +239,20 @@ void UMultiPlayerSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOn
 	MultiPlayerOnJoinSessionComplete.Broadcast(Result);
 }
 
+/**
+ * @brief 销毁会话完成回调
+ * @param SessionName 会话名称
+ * @param bWasSuccessful 是否成功
+ * @details 清理委托，如设置了重建标志则重新创建会话
+ */
 void UMultiPlayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
 {
-	//同理
 	if (SessionInterface)
 	{
 		SessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegateHandle);
 	}
-	// 如果销毁成功且设置了需要销毁后重新创建，则再次创建会话
+	
+	/** @brief 销毁成功后如需要则重建会话 */
 	if (bWasSuccessful && bCreateSessionOnDestroy)
 	{
 		bCreateSessionOnDestroy = false;
@@ -200,6 +261,11 @@ void UMultiPlayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, 
 	MultiPlayerOnDestroySessionComplete.Broadcast(bWasSuccessful);
 }
 
+/**
+ * @brief 启动会话完成回调
+ * @param SessionName 会话名称
+ * @param bWasSuccessful 是否成功
+ */
 void UMultiPlayerSessionsSubsystem::OnStartSessionComplete(FName SessionName, bool bWasSuccessful)
 {
 }
