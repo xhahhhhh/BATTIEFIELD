@@ -21,16 +21,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "BATTLEFIELD/CharacterTypes/Announcement.h"
 
-/**
- * @brief 本地匹配状态命名空间
- * 
- * 定义冷却状态常量用于本地比较
- */
-namespace MatchState
-{
-	const FName Cooldown = FName(TEXT("Cooldown"));
-}
-
 //============================
 // 击杀公告
 //============================
