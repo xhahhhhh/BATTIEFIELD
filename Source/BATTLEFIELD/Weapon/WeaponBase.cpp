@@ -83,7 +83,8 @@ void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	// 配置网络复制属性
-	DOREPLIFETIME(AWeaponBase, WeaponState);
+	DOREPLIFETIME_CONDITION(AWeaponBase, WeaponState,COND_SkipOwner);
+	DOREPLIFETIME_CONDITION(AWeaponBase, Ammo,COND_OwnerOnly);
 	// 仅对所有者复制倒带设置
 	DOREPLIFETIME_CONDITION(AWeaponBase, bUseServerSideRewind, COND_OwnerOnly);
 }

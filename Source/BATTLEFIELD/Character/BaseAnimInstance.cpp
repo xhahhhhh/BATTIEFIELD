@@ -113,7 +113,7 @@ void UBaseAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		
 		// 将世界空间的位置和旋转转换为右手骨骼的局部空间
 		// 这样LeftHandTransform就变成了相对于hand_r骨骼的偏移
-		// 动画蓝图中的Two Bone IK节点会使用这个值
+		// 动画蓝图中的FABRIK节点会使用这个值
 		OwningCharacter->GetMesh()->TransformToBoneSpace(FName("hand_r"), LeftHandTransform.GetLocation(),
 		                                                 LeftHandTransform.GetRotation().Rotator(), OutPosition,
 		                                                 OutRotation);

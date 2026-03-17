@@ -14,7 +14,6 @@
 #include "camera/CameraComponent.h"
 #include "TimerManager.h"
 #include "Sound/SoundCue.h"
-#include "BATTLEFIELD//Character/BaseAnimInstance.h"
 #include "BATTLEFIELD/Weapon/Projectile.h"
 #include "BATTLEFIELD/Weapon/Shotgun.h"
 

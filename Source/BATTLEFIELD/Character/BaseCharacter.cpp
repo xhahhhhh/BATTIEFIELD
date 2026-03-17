@@ -403,9 +403,6 @@ void ABaseCharacter::MulticastElim_Implementation(bool bPlayerLeftGame)
 	// 播放淘汰动画
 	PlayElimMontage();
 	
-	// 启用骨骼物理模拟（布娃娃效果）
-	GetMesh()->SetAllBodiesSimulatePhysics(true);
-	
 	/* 溶解效果已禁用（注释掉）
 	if (DissolveMaterialInstance)
 	{
@@ -494,9 +491,7 @@ void ABaseCharacter::ElimTimerFinished()
 	{
 		OnLeftGame.Broadcast();
 	}
-	
-	// 关闭物理模拟
-	GetMesh()->SetAllBodiesSimulatePhysics(false);
+
 }
 
 // 服务器RPC实现：处理玩家离开游戏

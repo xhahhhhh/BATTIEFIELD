@@ -21,7 +21,7 @@
 AProjectile::AProjectile()
 {
 	// 启用每帧Tick，启用网络复制
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
 
 	// 创建碰撞盒作为根组件
