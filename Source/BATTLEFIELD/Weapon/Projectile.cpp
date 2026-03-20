@@ -20,7 +20,7 @@
 
 AProjectile::AProjectile()
 {
-	// 启用每帧Tick，启用网络复制
+	// 启用网络复制
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
 

@@ -57,7 +57,7 @@ void APlayerGameMode::Tick(float DeltaTime)
 		}
 	}
 	//============================
-	// 冷却阶段：等待下一句
+	// 冷却阶段：等待下一次比赛
 	//============================
 	else if (MatchState == MatchState::Cooldown)
 	{
